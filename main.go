@@ -13,6 +13,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/kr/text"
+	"github.com/satori/go.uuid"
 )
 
 var homeDir string
@@ -115,7 +116,8 @@ func handleURL(url string) {
 	if !strings.HasPrefix(url, "http") {
 		return
 	}
-	f, err := os.OpenFile(homeDir+"/recipes/import.apsa", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	id := uuid.NewV4().String()
+	f, err := os.OpenFile(homeDir+"/.apsa/library/"+id+".md", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Panic(err)
 	}
