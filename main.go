@@ -37,8 +37,8 @@ type Recipe struct {
 
 func (r *Recipe) toApsa() string {
 	const tmplString = `# {{.Title}}
-von: {{.Source}}
-tags: {{range .Tags}}{{.}}, {{end}}
+Quelle: {{.Source}}
+Tags: {{range .Tags}}{{.}}, {{end}}
 Portionen: {{.Yield}}
 Kochzeit: {{.CookTime}}
 Zubereitungszeit: {{.PrepTime}}
