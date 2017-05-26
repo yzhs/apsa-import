@@ -88,6 +88,7 @@ func generateRecipe(url string) string {
 			}
 			tmp = strings.Replace(tmp, "&szlig;", "ß", -1)
 			tmp = strings.Replace(tmp, "&amp;", "&", -1)
+			tmp = strings.Replace(tmp, "\t", " ", -1)
 
 			err = json.Unmarshal([]byte(tmp), &recipe)
 			if err != nil {
