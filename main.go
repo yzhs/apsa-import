@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"os/user"
 	"strings"
 	"text/template"
@@ -150,8 +151,16 @@ func main() {
 			handleURL(url)
 		}
 	} else {
+		i := 0
 		for _, url := range os.Args[1:] {
 			handleURL(url)
+			i += 1
 		}
+		fmt.Println("Sucessfully imported", i, "recipes.")
+	}
+
+	err = exec.Command("apsa", "-i").Run()
+	if err != nil {
+		panic(err)
 	}
 }
