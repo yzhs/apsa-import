@@ -26,7 +26,7 @@ func usage() {
 type Recipe struct {
 	Title  string `json:"name"`
 	Source string
-	Tags   []string `json:"recipeCategory"`
+	Tags   []string `json:"keywords"`
 	Yield  string   `json:"recipeYield"`
 
 	CookTime string `json:"cookTime"`
