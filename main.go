@@ -124,8 +124,6 @@ func generateRecipe(url string) string {
 				for i, ingredient := range recipe.Ingredients {
 					recipe.Ingredients[i] = strings.TrimSpace(ingredient)
 				}
-				recipe.CookTime = strings.Replace(strings.TrimPrefix(recipe.CookTime, "PT"), "M", " min", 1)
-				recipe.PrepTime = strings.Replace(strings.TrimPrefix(recipe.PrepTime, "PT"), "M", " min", 1)
 				tmp = ""
 				for _, str := range strings.Split(recipe.Instructions, "\n") {
 					tmp += text.Wrap(str, 80) + "\n"
