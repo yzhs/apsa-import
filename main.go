@@ -12,6 +12,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/Masterminds/sprig"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/kr/text"
 	uuid "github.com/satori/go.uuid"
@@ -70,10 +71,10 @@ steps:
   - {{ . }}
   {{- end }}
   instructions: |
-    {{.Instructions | indent 4}}
+{{.Instructions | indent 4}}
 `
 
-	tmpl := template.Must(template.New("recipe.yaml").Parse(tmplString))
+	tmpl := template.Must(template.New("recipe.yaml").Funcs(sprig.TxtFuncMap()).Parse(tmplString))
 	buf := new(bytes.Buffer)
 	err := tmpl.Execute(buf, r)
 	if err != nil {
