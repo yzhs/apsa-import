@@ -29,8 +29,17 @@ type Recipe struct {
 	Tags   []string `json:"keywords"`
 	Yield  string   `json:"recipeYield"`
 
-	CookTime string `json:"cookTime"`
-	PrepTime string `json:"prepTime"`
+	CookTime  string `json:"cookTime"`
+	PrepTime  string `json:"prepTime"`
+	TotalTime string `json:"totalTime"`
+
+	Nutrition struct {
+		servingSize  string `json:"servingSize"`
+		calories     string `json:"calories"`
+		protein      string `json:"proteinContent"`
+		fat          string `json:"fatContent"`
+		carbohydrate string `json:"carbohydrateContent"`
+	} `json:"nutrition"`
 
 	Ingredients  []string `json:"recipeIngredient"`
 	Instructions string   `json:"recipeInstructions"`
@@ -50,6 +59,9 @@ time:
 {{- end }}
 {{- with .PrepTime }}
   preparation: {{ . }}
+{{- end }}
+{{- with .TotalTime }}
+  total: {{ . }}
 {{- end }}
 
 steps:
