@@ -36,22 +36,32 @@ type Recipe struct {
 	Instructions string   `json:"recipeInstructions"`
 }
 
-func (r *Recipe) toApsa() string {
-	const tmplString = `# {{.Title}}
-Quelle: {{.Source}}
-Tags: {{range .Tags}}{{.}}, {{end}}
-Portionen: {{.Yield}}
-Kochzeit: {{.CookTime}}
-Zubereitungszeit: {{.PrepTime}}
+func (r *Recipe) toYaml() string {
+	const tmplString = `title: {{.Title}}
+source: {{.Source}}
+tags:
+  {{- range .Tags }}
+  - {{ . }}
+  {{- end }}
+yield: {{.Yield}}
+time:
+{{- with .CookTime }}
+  cooking: {{ . }}
+{{- end }}
+{{- with .PrepTime }}
+  preparation: {{ . }}
+{{- end }}
 
-Zutaten:
-{{range .Ingredients}}* {{.}}
-{{end}}
-{{.Instructions}}
-
+steps:
+- ingredients:
+  {{- range .Ingredients }}
+  - {{ . }}
+  {{- end }}
+  instructions: |
+    {{.Instructions | indent 4}}
 `
 
-	tmpl := template.Must(template.New("Recipe").Parse(tmplString))
+	tmpl := template.Must(template.New("recipe.yaml").Parse(tmplString))
 	buf := new(bytes.Buffer)
 	err := tmpl.Execute(buf, r)
 	if err != nil {
@@ -113,7 +123,7 @@ func generateRecipe(url string) string {
 	)
 
 	// Generate output
-	return recipe.toApsa()
+	return recipe.toYaml()
 }
 
 func handleURL(url string) {
@@ -121,7 +131,7 @@ func handleURL(url string) {
 		return
 	}
 	id := uuid.NewV4().String()
-	f, err := os.OpenFile(homeDir+"/.apsa/library/"+id+".md", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(homeDir+"/.apsa/library/"+id+".yaml", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Panic(err)
 	}
