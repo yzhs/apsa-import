@@ -70,45 +70,47 @@ func generateRecipe(url string) string {
 
 	// Extract data
 	var recipe Recipe
-	doc.Find("script[type=\"application/ld+json\"]").Each(func(i int, s *goquery.Selection) {
-		txt := strings.Replace(strings.TrimSpace(s.Text()), " , ", ", ", -1)
-		if strings.Contains(txt, "\"@type\": \"Recipe\"") {
-			tmp := ""
-			inString := false
-			for _, chr := range txt {
-				if chr == '\n' && inString {
-					tmp += "\\n"
-					continue
+	doc.Find(`script[type="application/ld+json"]`).Each(
+		func(i int, s *goquery.Selection) {
+			txt := strings.Replace(strings.TrimSpace(s.Text()), " , ", ", ", -1)
+			if strings.Contains(txt, "\"@type\": \"Recipe\"") {
+				tmp := ""
+				inString := false
+				for _, chr := range txt {
+					if chr == '\n' && inString {
+						tmp += "\\n"
+						continue
+					}
+
+					tmp += string(chr)
+					if chr == '"' {
+						inString = !inString
+					}
+				}
+				tmp = strings.Replace(tmp, "&szlig;", "ß", -1)
+				tmp = strings.Replace(tmp, "&amp;", "&", -1)
+				tmp = strings.Replace(tmp, "\t", " ", -1)
+
+				err = json.Unmarshal([]byte(tmp), &recipe)
+				if err != nil {
+					log.Panic(err)
 				}
 
-				tmp += string(chr)
-				if chr == '"' {
-					inString = !inString
+				// Polish recipe
+				recipe.Source = url
+				for i, ingredient := range recipe.Ingredients {
+					recipe.Ingredients[i] = strings.TrimSpace(ingredient)
 				}
+				recipe.CookTime = strings.Replace(strings.TrimPrefix(recipe.CookTime, "PT"), "M", " min", 1)
+				recipe.PrepTime = strings.Replace(strings.TrimPrefix(recipe.PrepTime, "PT"), "M", " min", 1)
+				tmp = ""
+				for _, str := range strings.Split(recipe.Instructions, "\n") {
+					tmp += text.Wrap(str, 80) + "\n"
+				}
+				recipe.Instructions = tmp
 			}
-			tmp = strings.Replace(tmp, "&szlig;", "ß", -1)
-			tmp = strings.Replace(tmp, "&amp;", "&", -1)
-			tmp = strings.Replace(tmp, "\t", " ", -1)
-
-			err = json.Unmarshal([]byte(tmp), &recipe)
-			if err != nil {
-				log.Panic(err)
-			}
-
-			// Polish recipe
-			recipe.Source = url
-			for i, ingredient := range recipe.Ingredients {
-				recipe.Ingredients[i] = strings.TrimSpace(ingredient)
-			}
-			recipe.CookTime = strings.Replace(strings.TrimPrefix(recipe.CookTime, "PT"), "M", " min", 1)
-			recipe.PrepTime = strings.Replace(strings.TrimPrefix(recipe.PrepTime, "PT"), "M", " min", 1)
-			tmp = ""
-			for _, str := range strings.Split(recipe.Instructions, "\n") {
-				tmp += text.Wrap(str, 80) + "\n"
-			}
-			recipe.Instructions = tmp
-		}
-	})
+		},
+	)
 
 	// Generate output
 	return recipe.toApsa()
