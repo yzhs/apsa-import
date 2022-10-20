@@ -12,7 +12,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/Masterminds/sprig"
+	sprig "github.com/Masterminds/sprig/v3"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/kr/text"
 	uuid "github.com/satori/go.uuid"
