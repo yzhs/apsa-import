@@ -6,10 +6,11 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/yzhs/apsa-import-chefkoch.de/recipe"
 )
 
-func ConvertRecipe(url string, doc *goquery.Document) Recipe {
-	var recipe Recipe
+func convertRecipe(url string, doc *goquery.Document) recipe.Recipe {
+	var recipe recipe.Recipe
 	doc.Find(`script[type="application/ld+json"]`).Each(
 		func(i int, s *goquery.Selection) {
 			txt := strings.Replace(strings.TrimSpace(s.Text()), " , ", ", ", -1)
