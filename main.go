@@ -11,14 +11,15 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	uuid "github.com/satori/go.uuid"
-	"github.com/yzhs/apsa-import-chefkoch.de/chefkoch"
-	"github.com/yzhs/apsa-import-chefkoch.de/recipe"
+
+	"github.com/yzhs/apsa-import/chefkoch"
+	"github.com/yzhs/apsa-import/recipe"
 )
 
 var homeDir string
 
 func usage() {
-	fmt.Println("Usage: apsa-import-chefkoch.de [URL]...")
+	fmt.Println("Usage: apsa-import [URL]...")
 }
 
 func convertRecipe(url string, doc *goquery.Document) recipe.Recipe {

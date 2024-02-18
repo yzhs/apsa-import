@@ -1,4 +1,4 @@
-module github.com/yzhs/apsa-import-chefkoch.de
+module github.com/yzhs/apsa-import
 
 go 1.15
 

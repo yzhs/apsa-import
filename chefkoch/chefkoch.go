@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/yzhs/apsa-import-chefkoch.de/recipe"
+	"github.com/yzhs/apsa-import/recipe"
 )
 
 func ConvertRecipe(url string, doc *goquery.Document) recipe.Recipe {
