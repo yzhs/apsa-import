@@ -111,20 +111,24 @@ func ConvertRecipe(url string, doc *goquery.Document) Recipe {
 					log.Panic(err)
 				}
 
-				// Polish recipe
 				recipe.Source = url
-				for i, ingredient := range recipe.Ingredients {
-					recipe.Ingredients[i] = strings.TrimSpace(ingredient)
-				}
-				tmp = ""
-				for _, str := range strings.Split(recipe.Instructions, "\n") {
-					tmp += text.Wrap(str, 80) + "\n"
-				}
-				recipe.Instructions = tmp
 			}
 		},
 	)
+
+	recipe.Polish()
 	return recipe
+}
+
+func (recipe *Recipe) Polish() {
+	for i, ingredient := range recipe.Ingredients {
+		recipe.Ingredients[i] = strings.TrimSpace(ingredient)
+	}
+	tmp := ""
+	for _, str := range strings.Split(recipe.Instructions, "\n") {
+		tmp += text.Wrap(str, 80) + "\n"
+	}
+	recipe.Instructions = tmp
 }
 
 func generateRecipe(url string) string {
