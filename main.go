@@ -11,6 +11,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	uuid "github.com/satori/go.uuid"
+	"github.com/yzhs/apsa-import-chefkoch.de/chefkoch"
 )
 
 var homeDir string
@@ -26,7 +27,7 @@ func generateRecipe(url string) string {
 		log.Panic(err)
 	}
 
-	recipe := convertRecipe(url, doc)
+	recipe := chefkoch.ConvertRecipe(url, doc)
 	recipe.Polish()
 	return recipe.ToYaml()
 }

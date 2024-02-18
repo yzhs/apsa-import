@@ -1,4 +1,4 @@
-package main
+package chefkoch
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"github.com/yzhs/apsa-import-chefkoch.de/recipe"
 )
 
-func convertRecipe(url string, doc *goquery.Document) recipe.Recipe {
+func ConvertRecipe(url string, doc *goquery.Document) recipe.Recipe {
 	var recipe recipe.Recipe
 	doc.Find(`script[type="application/ld+json"]`).Each(
 		func(i int, s *goquery.Selection) {
