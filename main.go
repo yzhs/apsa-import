@@ -116,7 +116,6 @@ func ConvertRecipe(url string, doc *goquery.Document) Recipe {
 		},
 	)
 
-	recipe.Polish()
 	return recipe
 }
 
@@ -132,17 +131,14 @@ func (recipe *Recipe) Polish() {
 }
 
 func generateRecipe(url string) string {
-	// Read page
 	url = strings.TrimSpace(url)
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	// Extract data
 	recipe := ConvertRecipe(url, doc)
-
-	// Generate output
+	recipe.Polish()
 	return recipe.toYaml()
 }
 
