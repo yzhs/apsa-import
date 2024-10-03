@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -38,10 +39,29 @@ func generateRecipe(url string) string {
 	return recipe.ToYaml()
 }
 
+func getConfirmation() bool {
+	fmt.Print("Looks good? [Y/n] ")
+
+	reader := bufio.NewScanner(os.Stdin)
+	response := reader.Text()
+
+	response = strings.ToLower(strings.TrimSpace(response))
+	return response == "y" || response == "yes" || response == ""
+}
+
 func handleURL(url string) {
 	if !strings.HasPrefix(url, "http") {
 		return
 	}
+	recipe := generateRecipe(url)
+	fmt.Printf("%v\n\n", recipe)
+	good := getConfirmation()
+
+	if !good {
+		fmt.Println("Discarding recipe")
+		return
+	}
+
 	id := uuid.NewV4().String()
 	f, err := os.OpenFile(homeDir+"/.apsa/library/"+id+".yaml", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -49,7 +69,7 @@ func handleURL(url string) {
 	}
 	defer f.Close()
 
-	_, err = f.WriteString(generateRecipe(url))
+	_, err = f.WriteString(recipe)
 	if err != nil {
 		log.Panic(err)
 	}
