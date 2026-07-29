@@ -16,22 +16,23 @@ function get()
 	fi
 }
 
-tempfile="$(mktemp --suffix=.yaml)"
-trap "rm \"$tempfile\" >& /dev/null" EXIT
+
+tempdir="$(mktemp -d)"
+trap "rm -r \"$tempdir\" >& /dev/null" EXIT
 
 get "$url" \
 	| htmlq --text 'script[type="application/ld+json"]' \
-	| jq --arg 'source' "$url" -f "$dir/ld_json.jq" \
-	| yq -Poy \
-	> "$tempfile"
+	| jq -c --arg 'source' "$url" -f "$dir/ld_json.jq" \
+	| while IFS=$'\n' read -r recipe
+	do
+		recipe_id="$(uuidgen -r)"
+		tempfile="$tempdir/$recipe_id.yaml"
 
-recipe_id="$(uuidgen -r)"
+		echo "$recipe" | yq -Poy | sed -E 's/ (g|l|ml) /\1 /' > "$tempfile"
 
-"$EDITOR" "$tempfile"
-if [ ! -s "$tempfile" ]
-then
-	"Aborted import of $url"
-	exit
-fi
-mv -i "$tempfile" ~/.apsa/library/"$recipe_id.yaml"
+		nvim-qt --nofork -- "$tempfile"
+		[ ! -s "$tempfile" ] && continue
+
+		mv -i "$tempfile" ~/.apsa/library/"$recipe_id.yaml"
+	done
 apsa -i

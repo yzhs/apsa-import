@@ -1,9 +1,9 @@
 def type(name):
     select(."@type" == name);
 
-."@graph" | map({key: ."@type", value: .}) | from_entries |
-(.Article.keywords // if .Recipe.keywords then [.Recipe.keywords | split(",")[] | trim] else [] end) as $tags |
-.Recipe |
+."@graph"[] |
+(type("Article").keywords // if type("Recipe").keywords then [.Recipe.keywords | split(",")[] | trim] else [] end) as $tags |
+type("Recipe") |
 {
     title: .name,
     source: $source,
