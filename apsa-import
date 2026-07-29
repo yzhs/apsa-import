@@ -1,0 +1,37 @@
+#!/bin/zsh
+
+set -eu
+
+dir="$(dirname "$(realpath "$0")")"
+
+url="$1"
+
+function get()
+{
+	if [[ "$1" == https://* ]]
+	then
+		curl -sSL "$1"
+	else
+		cat "$1"
+	fi
+}
+
+tempfile="$(mktemp --suffix=.yaml)"
+trap "rm \"$tempfile\" >& /dev/null" EXIT
+
+get "$url" \
+	| htmlq --text 'script[type="application/ld+json"]' \
+	| jq --arg 'source' "$url" -f "$dir/ld_json.jq" \
+	| yq -Poy \
+	> "$tempfile"
+
+recipe_id="$(uuidgen -r)"
+
+"$EDITOR" "$tempfile"
+if [ ! -s "$tempfile" ]
+then
+	"Aborted import of $url"
+	exit
+fi
+mv -i "$tempfile" ~/.apsa/library/"$recipe_id.yaml"
+apsa -i
