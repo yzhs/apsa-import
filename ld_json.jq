@@ -1,7 +1,7 @@
 def type(name):
     select(."@type" == name);
 
-."@graph"[] |
+(."@graph" // [.])[] |
 (type("Article").keywords // if type("Recipe").keywords then [type("Recipe").keywords | split(",")[] | trim] else [] end) as $tags |
 type("Recipe") |
 {
