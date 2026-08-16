@@ -2,7 +2,7 @@ def type(name):
     select(."@type" == name);
 
 ."@graph"[] |
-(type("Article").keywords // if type("Recipe").keywords then [.Recipe.keywords | split(",")[] | trim] else [] end) as $tags |
+(type("Article").keywords // if type("Recipe").keywords then [type("Recipe").keywords | split(",")[] | trim] else [] end) as $tags |
 type("Recipe") |
 {
     title: .name,
